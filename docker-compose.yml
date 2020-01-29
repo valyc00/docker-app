@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  db:
+    image: mysql:5.5
+    restart: always
+    volumes:
+      - ./mysql-dump:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: mrm
+    ports:
+      - 3306:3306 
+    networks:
+      - front-tier
+      - back-tier 
+      
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8085:8080
+    networks:
+      - front-tier
+      - back-tier 
+  app:
+    image: adoptopenjdk:11-jre-hotspot
+    command: java -jar /opt/app/app.jar
+    volumes:
+     - ./app:/opt/app
+    ports:
+      - "8080:8080"
+    networks:
+      - front-tier
+      - back-tier
+  
+    
+
+volumes:
+  db-data:
+
+networks:
+  front-tier:
+  back-tier:
